@@ -1,0 +1,44 @@
+@import 'tailwindcss';
+
+/* @layer base {*/
+  :root { 
+    /* Theme Light (Default) */
+    /* Colors palette */
+      --primary-color: #596dc7; /* #596dc7 */ 
+      --secondary-color: #161735; /* #161735 */
+      --tertiary-color: #379186; /* #f0f0f0 */
+      --fourth-color: #e0e0e0;
+    
+      /* Text colors palette */
+      --primary-color-text: #000;
+      --secondary-color-text: #596dc7;
+      --tertiary-color-text: #379186;
+      --fourth-color-text: #878a8f;
+      --fifth-color-text: #646464;
+    
+      /* Main background color */
+      --background-color: #ffffff;
+      --background-color-light: #dddddd; 
+
+  }
+
+  .dark {
+    /* Theme Dark */
+    /* Colors palette */
+  --primary-color: #596dc7; /* #596dc7 */
+  --secondary-color: #161735; /* #161735 */
+  --tertiary-color: #314e4b; /* #f0f0f0 */
+  --fourth-color: #818181; /* #818181 */
+
+  /* Text colors palette */
+  --primary-color-text: #fff; /* #fff */
+  --secondary-color-text: #596dc7;
+  --tertiary-color-text: #314e4b;
+  --fourth-color-text: #878a8f; /* #878a8f */
+  --fifth-color-text: #b0b0b0; /* #b0b0b0 */
+
+  /* Main background color */
+  --background-color: #101010; /* #161616 */
+  --background-color-light: #181818; /* #222222 */
+  }
+/*} */
