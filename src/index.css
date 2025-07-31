@@ -42,3 +42,54 @@
   --background-color-light: #181818; /* #222222 */
   }
 /*} */
+
+
+/* Global Text Variables */
+.t-primary {
+  color: var(--primary-color-text);
+}
+
+.t-secondary {
+  color: var(--secondary-color-text);
+}
+
+.t-tertiary {
+  color: var(--tertiary-color-text);
+}
+
+.t-fourth {
+  color: var(--fourth-color-text);
+}
+
+.t-fifth {
+  color: var(--fifth-color-text);
+}
+
+/* Global background Variables */
+.bg-primary {
+  background-color: var(--primary-color);
+}
+
+.bg-secondary {
+  background-color: var(--secondary-color);
+}
+
+.bg-tertiary {
+  background-color: var(--tertiary-color);
+}
+
+.bg-fourth {
+  background-color: var(--fourth-color);
+}
+
+.bg-fifth {
+  background-color: var(--fifth-color-text);
+}
+
+.bg-main {
+  background-color: var(--background-color);
+}
+
+.bg-main-light {
+  background-color: var(--background-color-light);
+}
