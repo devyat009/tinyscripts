@@ -1,4 +1,4 @@
-import { app, BrowserWindow } from 'electron';
+import { app, BrowserWindow, Menu } from 'electron';
 import * as path from 'node:path';
 import * as fs from 'node:fs';
 
@@ -36,6 +36,10 @@ function createWindow() {
     },
   });
 
+  if (app.isPackaged) {
+    Menu.setApplicationMenu(null);
+  }
+  
   // loads the front end built by Vite
   if (process.env.NODE_ENV === 'development') {
     win.loadURL('http://localhost:5173/');

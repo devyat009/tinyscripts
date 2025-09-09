@@ -9,14 +9,30 @@
     "name": "Devyat009"
   },
   "scripts": {
-    "build": "electron-vite build",
+    "build": "electron-vite build && electron-builder",
     "start": "electron-vite preview",
     "dev": "electron-vite dev"
   },
   "build": {
+    "appId": "com.tinyscripts.app",
+    "productName": "TinyScripts",
     "files": [
       "out/**/*"
-    ]
+    ],
+    "directories": {
+      "output": "release"
+    },
+    "win": {
+      "target": [
+        {
+          "target": "portable",
+          "arch": [
+            "x64"
+          ]
+        }
+      ],
+      "icon": "assets/icon.ico"
+    }
   },
   "dependencies": {
     "autoprefixer": "^10.4.21",
