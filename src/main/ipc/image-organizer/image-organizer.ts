@@ -1,0 +1,1 @@
+import './image-organizer-ipc';

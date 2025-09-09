@@ -1,15 +1,9 @@
-export interface ScriptOptions {
-  path: string;
-  format: "international" | "american";
-  extensions: string[];
-}
-
-export interface ScriptModule {
+export interface ScriptModule<TOptions = Record<string, unknown>> {
   id: string;
   name: string;
   description: string;
-  run: (options: ScriptOptions) => Promise<void>;
-  getDefaultOptions: () => ScriptOptions;
+  run: (options: TOptions) => Promise<void>;
+  getDefaultOptions: () => TOptions;
   configSchema: ScriptConfigSchema;
 }
 
