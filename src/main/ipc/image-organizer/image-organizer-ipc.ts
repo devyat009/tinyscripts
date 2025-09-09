@@ -14,6 +14,7 @@ const MONTHS: Record<number, string> = {
 
 type OrganizeResult = {
   sourceDir: string;
+  outputDir: string;
   moved: number;
   ignored: number;
   errors: number;
@@ -82,23 +83,27 @@ function resolveDefaultSourceDir(): string {
 
 async function organizarImagens(options: ImageOrganizerOptions): Promise<OrganizeResult> {
   const baseDir = options?.path && options.path.trim() !== "" ? options.path : resolveDefaultSourceDir();
+  const outputDir = options?.outputPath && options.outputPath.trim() !== "" ? options.outputPath : baseDir;
   const format = options?.format ?? "international";
   const exts = normalizeExts(options?.extensions);
+
+  console.log("ImageOrganizer: computed dirs", { baseDir, outputDir, format, exts });
 
   if (!fs.existsSync(baseDir)) {
     return {
       sourceDir: baseDir,
+      outputDir,
       moved: 0,
       ignored: 0,
       errors: 0,
-      logFile: path.join(baseDir, "organizer.log"),
+      logFile: path.join(outputDir, "organizer.log"),
       entries: [`Folder not found: ${baseDir}\n`],
     };
   }
 
   const { regex, map } = buildPattern(format, exts);
 
-  const logPath = path.join(baseDir, "organizer.log");
+  const logPath = path.join(outputDir, "organizer.log");
   const header = `\n--- Organization on ${new Date().toISOString().replace("T", " ").slice(0, 19)} ---\n`;
 
   const entries: string[] = [];
@@ -106,15 +111,47 @@ async function organizarImagens(options: ImageOrganizerOptions): Promise<Organiz
   let ignored = 0;
   let errors = 0;
 
-  const dirents = await fsp.readdir(baseDir, { withFileTypes: true });
+  // Helpers
+  const isSubPath = (p: string, base: string) => {
+    const rp = path.resolve(p);
+    const rb = path.resolve(base);
+    return rp === rb || rp.startsWith(rb + path.sep);
+  };
 
-  for (const dirent of dirents) {
-    if (!dirent.isFile()) continue;
+  const samePath = (a: string, b: string) => path.resolve(a).toLowerCase() === path.resolve(b).toLowerCase();
 
-    const filename = dirent.name;
+  // Recursively gather files from baseDir, skipping the outputDir subtree to avoid reprocessing moved files
+  const files: string[] = [];
+  const stack: string[] = [baseDir];
+  while (stack.length) {
+    const current = stack.pop()!;
+    // Skip traversing into outputDir subtree if outputDir is inside baseDir
+    if (isSubPath(current, outputDir) && !samePath(current, baseDir)) {
+      // If current is within the outputDir and it's not the base itself, skip
+      continue;
+    }
+    try {
+      const dirents = await fsp.readdir(current, { withFileTypes: true });
+      for (const de of dirents) {
+        const full = path.join(current, de.name);
+        if (de.isDirectory()) {
+          // Skip hidden folders and node_modules-like
+          if (de.name.startsWith('.') || de.name.toLowerCase() === 'node_modules') continue;
+          stack.push(full);
+        } else if (de.isFile()) {
+          files.push(full);
+        }
+      }
+    } catch (e) {
+      // ignore unreadable directories, but note error message for diagnostics
+      entries.push(`IGN: cannot read dir ${current} (${e instanceof Error ? e.message : String(e)})\n`);
+    }
+  }
+
+  for (const origem of files) {
+    const filename = path.basename(origem);
     if (filename.startsWith(".") || filename === "organizer.log") continue;
 
-    const origem = path.join(baseDir, filename);
     const match = regex.exec(filename);
 
     if (!match) {
@@ -134,14 +171,22 @@ async function organizarImagens(options: ImageOrganizerOptions): Promise<Organiz
     }
 
     const nomePasta = `${year}/${MONTHS[month]}`;
-    const pastaDestino = path.join(baseDir, String(year), MONTHS[month]);
+    const pastaDestino = path.join(outputDir, String(year), MONTHS[month]);
     const destino = path.join(pastaDestino, filename);
+
+    // If file is already in its final folder, skip
+    if (samePath(path.dirname(origem), pastaDestino)) {
+      const e = `IGN: ${filename} (already in ${nomePasta}/)\n`;
+      entries.push(e);
+      ignored++;
+      continue;
+    }
 
     try {
       await fsp.mkdir(pastaDestino, { recursive: true });
-      await moveFileSafe(origem, destino);
+  await moveFileSafe(origem, destino);
 
-      const e = `MOV: ${filename} -> ${nomePasta}/\n`;
+  const e = `MOV: ${filename} -> ${nomePasta}/ (${destino})\n`;
       entries.push(e);
       moved++;
     } catch (err: unknown) {
@@ -153,6 +198,8 @@ async function organizarImagens(options: ImageOrganizerOptions): Promise<Organiz
   }
 
   try {
+  // Ensure root output directory exists before writing log
+  await fsp.mkdir(outputDir, { recursive: true });
     await fsp.appendFile(logPath, header + entries.join(""), { encoding: "utf-8" });
   } catch (err) {
     console.warn("Failed to write organizer.log:", err);
@@ -160,7 +207,7 @@ async function organizarImagens(options: ImageOrganizerOptions): Promise<Organiz
 
   for (const line of entries) console.log(line.trim());
 
-  return { sourceDir: baseDir, moved, ignored, errors, logFile: logPath, entries };
+  return { sourceDir: baseDir, outputDir, moved, ignored, errors, logFile: logPath, entries };
 }
 
 ipcMain.handle("run-image-organizer", async (_event, options: ImageOrganizerOptions) => {

@@ -15,9 +15,9 @@ export function ScriptTile({ script, onClick }: ScriptTileProps) {
         <h3 className="font-semibold text-white text-lg group-hover:text-blue-400 transition-colors">
           {script.name}
         </h3>
-        <span className="text-xs bg-blue-600 text-white px-2 py-1 rounded-full">
+        {/* <span className="text-xs bg-blue-600 text-white px-2 py-1 rounded-full">
           {script.id}
-        </span>
+        </span> */}
       </div>
       <p className="text-gray-300 text-sm leading-relaxed">
         {script.description}

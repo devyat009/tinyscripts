@@ -8,6 +8,7 @@ interface ImageOrganizerViewProps {
 export function ImageOrganizerView({ onBack }: ImageOrganizerViewProps) {
   const [options, setOptions] = useState<ImageOrganizerOptions>({
     path: '',
+    outputPath: '',
     format: 'international',
     extensions: ['jpg', 'png', 'webp', 'jpeg']
   });
@@ -31,6 +32,7 @@ export function ImageOrganizerView({ onBack }: ImageOrganizerViewProps) {
     try {
       const result = (await window.electron.invoke('run-image-organizer', options)) as {
         sourceDir: string;
+        outputDir: string;
         moved: number;
         ignored: number;
         errors: number;
@@ -43,6 +45,7 @@ export function ImageOrganizerView({ onBack }: ImageOrganizerViewProps) {
           title: 'Image Organizer',
           lines: [
             `Pasta: ${result.sourceDir}`,
+            `Saída: ${result.outputDir}`,
             `Movidos: ${result.moved}`,
             `Ignorados: ${result.ignored}`,
             `Erros: ${result.errors}`,
@@ -60,15 +63,14 @@ export function ImageOrganizerView({ onBack }: ImageOrganizerViewProps) {
     }
   };
 
-  const handleBrowse = async () => {
-  
+  const handleBrowse = (field: 'path' | 'outputPath') => async () => {
     try {
       console.log('Calling open-directory-dialog...');
       const result = await window.electron.invoke('open-directory-dialog') as { canceled: boolean; filePaths: string[] };
       console.log('Dialog result:', result);
-      
+
       if (result && !result.canceled && result.filePaths.length > 0) {
-        setOptions((prev) => ({ ...prev, path: result.filePaths[0] }));
+        setOptions((prev) => ({ ...prev, [field]: result.filePaths[0] }));
       }
     } catch (error) {
       console.error('Error opening directory dialog:', error);
@@ -129,9 +131,9 @@ export function ImageOrganizerView({ onBack }: ImageOrganizerViewProps) {
         </button>
         <div className="flex items-center gap-3">
           <h1 className="text-2xl font-bold">Image Organizer</h1>
-          <span className="text-sm text-gray-400 bg-gray-700 px-3 py-1 rounded-full">
+          {/* <span className="text-sm text-gray-400 bg-gray-700 px-3 py-1 rounded-full">
             image-organizer
-          </span>
+          </span> */}
         </div>
       </div>
 
@@ -218,7 +220,29 @@ export function ImageOrganizerView({ onBack }: ImageOrganizerViewProps) {
                 <button
                   className="absolute top-1/2 right-2 -translate-y-1/2 bg-blue-600 hover:bg-blue-700 text-white px-4 py-2 rounded-lg font-medium transition-colors"
                   style={{ minWidth: '80px' }}
-                  onClick={handleBrowse}
+                  onClick={handleBrowse('path')}
+                >
+                  Browse
+                </button>
+              </div>
+            </div>
+
+            <div className="space-y-3">
+              <label className="blcok text-sm font-medium text-gray-300">
+                Output Directory (optional)
+              </label>
+              <div className="relative">
+                <input
+                  type="text"
+                  value={options.outputPath}
+                  onChange={(e) => handleOptionChange('outputPath', e.target.value)}
+                  className="w-full px-4 py-3 bg-gray-800 border border-gray-600 rounded-lg text-white focus:border-blue-400 focus:outline-none focus:ring-2 focus:ring-blue-400/20"
+                  placeholder="C:\Users\YourName\Pictures\Organized"
+                />
+                <button
+                  className="absolute top-1/2 right-2 -translate-y-1/2 bg-blue-600 hover:bg-blue-700 text-white px-4 py-2 rounded-lg font-medium transition-colors"
+                  style={{ minWidth: '80px' }}
+                  onClick={handleBrowse('outputPath')}
                 >
                   Browse
                 </button>
@@ -234,7 +258,7 @@ export function ImageOrganizerView({ onBack }: ImageOrganizerViewProps) {
                 onChange={(e) => handleOptionChange('format', e.target.value as 'international' | 'american')}
                 className="w-full px-4 py-3 bg-gray-800 border border-gray-600 rounded-lg text-white focus:border-blue-400 focus:outline-none focus:ring-2 focus:ring-blue-400/20"
               >
-                <option value="international">International (DD-MM-YYYY)</option>
+                <option value="international">International (YYYY-MM-DD)</option>
                 <option value="american">American (MM-DD-YYYY)</option>
               </select>
             </div>
