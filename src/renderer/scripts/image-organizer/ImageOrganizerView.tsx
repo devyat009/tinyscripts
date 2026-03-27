@@ -1,12 +1,12 @@
 import { useEffect, useState } from 'react';
-import type { ImageOrganizerOptions } from './types/image-organizerDto';
+import type { ImageOrganizerOptionsDto } from './types/image-organizerDto';
 
 interface ImageOrganizerViewProps {
   onBack: () => void;
 }
 
 export function ImageOrganizerView({ onBack }: ImageOrganizerViewProps) {
-  const [options, setOptions] = useState<ImageOrganizerOptions>({
+  const [options, setOptions] = useState<ImageOrganizerOptionsDto>({
     path: '',
     outputPath: '',
     format: 'international',
@@ -77,8 +77,8 @@ export function ImageOrganizerView({ onBack }: ImageOrganizerViewProps) {
     }
   };
 
-  const handleOptionChange = (key: keyof ImageOrganizerOptions, value: string | string[]) => {
-    setOptions((prev: ImageOrganizerOptions) => ({ ...prev, [key]: value }));
+  const handleOptionChange = (key: keyof ImageOrganizerOptionsDto, value: string | string[]) => {
+    setOptions((prev: ImageOrganizerOptionsDto) => ({ ...prev, [key]: value }));
   };
 
   return (

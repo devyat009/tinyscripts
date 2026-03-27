@@ -9,7 +9,7 @@ export interface ScriptModule<TOptions = Record<string, unknown>> {
 
 export interface ScriptConfigSchema {
   [key: string]: {
-    type: "string" | "select" | "checkbox";
+    type: "string" | "select" | "checkbox" | "array" | "number" | "date" | "boolean";
     label: string;
     default?: string | boolean;
     options?: string[];
