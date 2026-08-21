@@ -35,6 +35,24 @@ Preview the built app locally:
 npm start
 ```
 
+## Standalone Executable (.EXE)
+
+To compile the application into a single standalone `.exe` executable for Windows:
+
+1. Install dependencies:
+```bash
+npm install
+```
+
+2. Run the build command (combines `electron-vite build` and `electron-builder`):
+```bash
+npm run build
+```
+
+3. The standalone portable executable will be generated inside the `release/` directory:
+- `release/TinyScripts 0.0.1.exe` (portable standalone binary)
+- `release/win-unpacked/` (unpacked directory containing the executable and resources)
+
 ## Roadmap / Ongoing plans
 
 - Modular script system

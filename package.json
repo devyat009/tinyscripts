@@ -9,39 +9,13 @@
     "name": "Devyat009"
   },
   "scripts": {
-    "build": "electron-vite build && electron-builder",
+    "build": "electron-vite build && electron-builder --config electron-builder.config.cjs",
     "start": "electron-vite preview",
     "dev": "electron-vite dev"
   },
-  "build": {
-    "appId": "com.tinyscripts.app",
-    "productName": "TinyScripts",
-    "files": [
-      "out/**/*"
-    ],
-    "directories": {
-      "output": "release"
-    },
-    "win": {
-      "target": [
-        {
-          "target": "portable",
-          "arch": [
-            "x64"
-          ]
-        }
-      ],
-      "icon": "assets/icon.ico"
-    }
-  },
   "dependencies": {
-    "autoprefixer": "^10.4.21",
-    "concurrently": "^9.2.0",
-    "cross-env": "^7.0.3",
-    "postcss": "^8.5.6",
     "react": "^19.1.0",
-    "react-dom": "^19.1.0",
-    "tailwindcss": "^4.1.11"
+    "react-dom": "^19.1.0"
   },
   "devDependencies": {
     "@eslint/js": "^9.30.1",
@@ -49,6 +23,9 @@
     "@types/react": "^19.1.8",
     "@types/react-dom": "^19.1.6",
     "@vitejs/plugin-react": "^4.6.0",
+    "autoprefixer": "^10.4.21",
+    "concurrently": "^9.2.0",
+    "cross-env": "^7.0.3",
     "electron": "^37.2.1",
     "electron-builder": "^26.0.12",
     "electron-vite": "^4.0.0",
@@ -56,6 +33,8 @@
     "eslint-plugin-react-hooks": "^5.2.0",
     "eslint-plugin-react-refresh": "^0.4.20",
     "globals": "^16.3.0",
+    "postcss": "^8.5.6",
+    "tailwindcss": "^4.1.11",
     "typescript": "~5.8.3",
     "typescript-eslint": "^8.35.1",
     "vite": "^7.0.4"
